@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "724400474405",
+    "firebase_url": "https://firm-capsule-229905.firebaseio.com",
+    "project_id": "firm-capsule-229905",
+    "storage_bucket": "firm-capsule-229905.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:724400474405:android:5d4aa4ef83e49e41",
+        "android_client_info": {
+          "package_name": "com.sample.CloudVisionTest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "724400474405-mnefepr50hl9qc39kam6q632uknud7r3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClyUZMD2RjXLNgRz8qZp1Uz13DJjg0Uyc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -49,6 +49,7 @@ import com.google.api.services.vision.v1.model.EntityAnnotation;
 import com.google.api.services.vision.v1.model.Feature;
 import com.google.api.services.vision.v1.model.Image;
 import com.google.api.services.vision.v1.model.ImageContext;
+import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView mMainImage;
     private long startTimeMS;
     private float uploadDurationSec;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
