@@ -311,7 +311,7 @@ public class TextRecognitionActivity extends AppCompatActivity {
     }
 
 
-    //여기서부터 firebase 사용
+    //여기서부터 firebase 사용 이중에 하나만 쓰거나 혹은 몇개 선택해서 쓰면 될것 같네
     private void recognizeText(FirebaseVisionImage image) {
 
         // [START get_detector_default]
