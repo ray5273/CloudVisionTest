@@ -53,7 +53,7 @@ import androidx.annotation.NonNull;
 
 public class TextRecognition_screenshot extends AppCompatActivity {
     private static final String CLOUD_VISION_API_KEY = "AIzaSyAT4yeZeEV1J9BHydi2HMBoRkJDbrZK5NU";
-    public static final String FILE_NAME = "Screenshot.png";
+    public static final String FILE_NAME = "Screenshot1.jpg";
 
     private static final String TAG = MainActivity.class.getSimpleName();
     public static final int SCREENSHOT_PERMISSIONS_REQUEST = 0;
@@ -75,10 +75,14 @@ public class TextRecognition_screenshot extends AppCompatActivity {
         FirebaseVisionTextRecognizer FV = FirebaseVision.getInstance().getCloudTextRecognizer();
 
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE )!= PackageManager.PERMISSION_GRANTED) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE )!= PackageManager.PERMISSION_GRANTED &&
+                checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE )!= PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, SCREENSHOT_PERMISSIONS_REQUEST);
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, SCREENSHOT_PERMISSIONS_REQUEST);
 
-        } else {
+
+        }
+        else {
             //do nothing at the moment
         }
 
@@ -87,10 +91,10 @@ public class TextRecognition_screenshot extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //Toast.makeText(getApplicationContext(),"hello", Toast.LENGTH_LONG).show();
                 View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
                 Bitmap bitmap = getScreenShot(rootView);
                 store(bitmap, FILE_NAME);
-                retreive();
             }
 
         });
@@ -119,35 +123,38 @@ public class TextRecognition_screenshot extends AppCompatActivity {
         File file = new File(dirPath, fileName);
         try {
             FileOutputStream fos = new FileOutputStream(file);
-            bm.compress(Bitmap.CompressFormat.PNG,100, fos);
+            bm.compress(Bitmap.CompressFormat.JPEG,10, fos);
             fos.flush();
             fos.close();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Error!", Toast.LENGTH_SHORT).show();
-        }
-    }
 
-
-    public void retreive() {
-        if (PermissionUtils.requestPermission(this, SCREENSHOT_PERMISSIONS_REQUEST, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            Uri uri = Uri.fromFile(file);
+            Toast.makeText(getApplicationContext(),uri.toString(), Toast.LENGTH_LONG).show();
             Intent intent = new Intent();
-            Uri uri = Uri.parse(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures");
             intent.setType("application/*");
             intent.putExtra(Intent.EXTRA_STREAM, uri);
-            startActivityForResult(intent, SCREENSHOT_IMAGE_REQUEST);
+            uploadImage(uri);
+            //startActivityForResult(intent, SCREENSHOT_IMAGE_REQUEST);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == SCREENSHOT_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
-            uploadImage(data.getData());
-    }
-    }
+ //   @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        if (data != null) {
+//            Toast.makeText(getApplicationContext(),data.getData().toString(), Toast.LENGTH_LONG).show();
+//
+//        }
+//
+//        if (requestCode == SCREENSHOT_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
+//            Toast.makeText(getApplicationContext(),data.getData().toString(), Toast.LENGTH_LONG).show();
+//            uploadImage(data.getData());
+//    }
+//    }
 
     @Override
     public void onRequestPermissionsResult(
