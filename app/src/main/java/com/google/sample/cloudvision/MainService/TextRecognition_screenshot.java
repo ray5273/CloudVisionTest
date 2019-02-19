@@ -74,17 +74,7 @@ public class TextRecognition_screenshot extends AppCompatActivity {
     private long startTimeMS;
     private float uploadDurationSec;
 
-    private boolean isServiceRunning() {
-        ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)){
-            if("com.google.sample.cloudvision".equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isServiceRunning2(Class<?> serviceClass) {
+    private boolean isServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {
@@ -96,7 +86,7 @@ public class TextRecognition_screenshot extends AppCompatActivity {
 
     public void turnServiceTrigger(View view) {
         Button ServiceButton = (Button) findViewById(R.id.ServiceTrigger);
-        if(!isServiceRunning2(AlwaysOnNotificationBarService.class)){
+        if(!isServiceRunning(AlwaysOnNotificationBarService.class)){
             ServiceButton.setText("서비스 비활성화");
             Log.e("service checkout", "Turn On Service");
             Intent service_intent = new Intent(getApplicationContext(), AlwaysOnNotificationBarService.class);
@@ -118,7 +108,7 @@ public class TextRecognition_screenshot extends AppCompatActivity {
         FirebaseVisionTextRecognizer FV = FirebaseVision.getInstance().getCloudTextRecognizer();
         notiman = new NotificationManagement(this);
         Button ServiceButton = (Button) findViewById(R.id.ServiceTrigger);
-        if(isServiceRunning2(AlwaysOnNotificationBarService.class))
+        if(isServiceRunning(AlwaysOnNotificationBarService.class))
             ServiceButton.setText("서비스 비활성화");
         else
             ServiceButton.setText("서비스 활성화");
