@@ -1,22 +1,27 @@
-package com.google.sample.cloudvision;
+package com.google.sample.cloudvision.MainService;
 
 import android.Manifest;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
-import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,19 +29,8 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.googleapis.json.GoogleJsonResponseException;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.gson.GsonFactory;
-import com.google.api.services.vision.v1.Vision;
-import com.google.api.services.vision.v1.VisionRequestInitializer;
-import com.google.api.services.vision.v1.model.AnnotateImageRequest;
-import com.google.api.services.vision.v1.model.BatchAnnotateImagesRequest;
 import com.google.api.services.vision.v1.model.BatchAnnotateImagesResponse;
 import com.google.api.services.vision.v1.model.EntityAnnotation;
-import com.google.api.services.vision.v1.model.Feature;
-import com.google.api.services.vision.v1.model.Image;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata;
@@ -47,32 +41,73 @@ import com.google.firebase.ml.vision.text.FirebaseVisionCloudTextRecognizerOptio
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import com.google.firebase.ml.vision.text.RecognizedLanguage;
+import com.google.sample.cloudvision.MainActivity;
+import com.google.sample.cloudvision.NotificationServiceTool.AlwaysOnNotificationBarService;
+import com.google.sample.cloudvision.NotificationServiceTool.NotificationManagement;
+import com.google.sample.cloudvision.R;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 
-public class TextRecognitionActivity extends AppCompatActivity {
 
+
+public class TextRecognition_screenshot extends AppCompatActivity {
     private static final String CLOUD_VISION_API_KEY = "AIzaSyAT4yeZeEV1J9BHydi2HMBoRkJDbrZK5NU";
-    public static final String FILE_NAME = "temp.jpg";
+    public static final String FILE_NAME = "Screenshot2.jpg";
+    public static NotificationManagement notiman;
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final int GALLERY_PERMISSIONS_REQUEST = 0;
-    private static final int GALLERY_IMAGE_REQUEST = 1;
-    public static final int CAMERA_PERMISSIONS_REQUEST = 2;
-    public static final int CAMERA_IMAGE_REQUEST = 3;
+    public static final int SCREENSHOT_PERMISSIONS_REQUEST = 0;
+    public static final int SCREENSHOT_IMAGE_REQUEST = 1;
+
+    private boolean trigger_flag = false;
 
     private TextView mImageDetails;
     private ImageView mMainImage;
     private long startTimeMS;
     private float uploadDurationSec;
 
+    private boolean isServiceRunning() {
+        ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)){
+            if("com.google.sample.cloudvision".equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isServiceRunning2(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void turnServiceTrigger(View view) {
+        Button ServiceButton = (Button) findViewById(R.id.ServiceTrigger);
+        if(!isServiceRunning2(AlwaysOnNotificationBarService.class)){
+            ServiceButton.setText("서비스 비활성화");
+            Log.e("service checkout", "Turn On Service");
+            Intent service_intent = new Intent(getApplicationContext(), AlwaysOnNotificationBarService.class);
+            startService(service_intent);
+        }else{
+            ServiceButton.setText("서비스 활성화");
+            Log.e("service checkout", "Turn Off Service");
+            Intent service_intent = new Intent(getApplicationContext(), AlwaysOnNotificationBarService.class);
+            stopService(service_intent);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,89 +116,109 @@ public class TextRecognitionActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FirebaseVisionTextRecognizer FV = FirebaseVision.getInstance().getCloudTextRecognizer();
+        notiman = new NotificationManagement(this);
+        Button ServiceButton = (Button) findViewById(R.id.ServiceTrigger);
+        if(isServiceRunning2(AlwaysOnNotificationBarService.class))
+            ServiceButton.setText("서비스 비활성화");
+        else
+            ServiceButton.setText("서비스 활성화");
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE )!= PackageManager.PERMISSION_GRANTED &&
+                checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE )!= PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, SCREENSHOT_PERMISSIONS_REQUEST);
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, SCREENSHOT_PERMISSIONS_REQUEST);
+
+
+        }
+        else {
+            //do nothing at the moment
+        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(TextRecognitionActivity.this);
-                builder
-                        .setMessage(R.string.dialog_select_prompt)
-                        .setPositiveButton(R.string.dialog_select_gallery, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                startGalleryChooser();
-                            }
-                        })
-                        .setNegativeButton(R.string.dialog_select_camera, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                startCamera();
-                            }
-                        });
-                builder.create().show();
+                //Toast.makeText(getApplicationContext(),"hello", Toast.LENGTH_LONG).show();
+                View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+                Bitmap bitmap = getScreenShot(rootView);
+                store(bitmap, FILE_NAME);
             }
+
         });
 
         mImageDetails = (TextView) findViewById(R.id.image_details);
         mMainImage = (ImageView) findViewById(R.id.main_image);
+
     }
 
-    public void startGalleryChooser() {
-        if (PermissionUtils.requestPermission(this, GALLERY_PERMISSIONS_REQUEST, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+    public static Bitmap getScreenShot(View view) {
+        View screenView = view.getRootView();
+        screenView.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(screenView.getDrawingCache());
+        screenView.setDrawingCacheEnabled(false);
+        return bitmap;
+    }
+
+    //store the image on the device
+    public void store(Bitmap bm, String fileName) {
+        String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures";
+        File dir = new File(dirPath);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        File file = new File(dirPath, fileName);
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            bm.compress(Bitmap.CompressFormat.JPEG,10, fos);
+            fos.flush();
+            fos.close();
+
+
+            Uri uri = Uri.fromFile(file);
+            Toast.makeText(getApplicationContext(),uri.toString(), Toast.LENGTH_LONG).show();
             Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent, "Select a photo"),
-                    GALLERY_IMAGE_REQUEST);
+            intent.setType("application/*");
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+            uploadImage(uri);
+            //startActivityForResult(intent, SCREENSHOT_IMAGE_REQUEST);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    public void startCamera() {
-        if (PermissionUtils.requestPermission(
-                this,
-                CAMERA_PERMISSIONS_REQUEST,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.CAMERA)) {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getCameraFile()));
-            startActivityForResult(intent, CAMERA_IMAGE_REQUEST);
-        }
-    }
-
-    public File getCameraFile() {
-        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        return new File(dir, FILE_NAME);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == GALLERY_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
-            uploadImage(data.getData());
-        } else if (requestCode == CAMERA_IMAGE_REQUEST && resultCode == RESULT_OK) {
-            uploadImage(Uri.fromFile(getCameraFile()));
-        }
-    }
+ //   @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        if (data != null) {
+//            Toast.makeText(getApplicationContext(),data.getData().toString(), Toast.LENGTH_LONG).show();
+//
+//        }
+//
+//        if (requestCode == SCREENSHOT_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
+//            Toast.makeText(getApplicationContext(),data.getData().toString(), Toast.LENGTH_LONG).show();
+//            uploadImage(data.getData());
+//    }
+//    }
 
     @Override
     public void onRequestPermissionsResult(
             int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case CAMERA_PERMISSIONS_REQUEST:
-                if (PermissionUtils.permissionGranted(requestCode, CAMERA_PERMISSIONS_REQUEST, grantResults)) {
-                    startCamera();
-                }
-                break;
-            case GALLERY_PERMISSIONS_REQUEST:
-                if (PermissionUtils.permissionGranted(requestCode, GALLERY_PERMISSIONS_REQUEST, grantResults)) {
-                    startGalleryChooser();
-                }
-                break;
+        if (requestCode==SCREENSHOT_PERMISSIONS_REQUEST) {
+            if (grantResults[0] ==PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission granted", Toast.LENGTH_LONG).show();
+                //do nothing at the momment
+            } else {
+                Toast.makeText(this, "Permission not granted", Toast.LENGTH_LONG).show();
+                finish();
+            }
         }
     }
+
 
     public void uploadImage(Uri uri) {
         startTimeMS = System.currentTimeMillis();
@@ -519,3 +574,9 @@ public class TextRecognitionActivity extends AppCompatActivity {
         // [END mlkit_process_document_text_block]
     }
 }
+
+
+
+
+
+

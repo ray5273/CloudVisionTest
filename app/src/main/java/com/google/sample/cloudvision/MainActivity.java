@@ -31,6 +31,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,14 +49,13 @@ import com.google.api.services.vision.v1.model.BatchAnnotateImagesResponse;
 import com.google.api.services.vision.v1.model.EntityAnnotation;
 import com.google.api.services.vision.v1.model.Feature;
 import com.google.api.services.vision.v1.model.Image;
-import com.google.api.services.vision.v1.model.ImageContext;
-import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.sample.cloudvision.NotificationServiceTool.AlwaysOnNotificationBarService;
+import com.google.sample.cloudvision.Utilities.PermissionUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
     private ImageView mMainImage;
     private long startTimeMS;
     private float uploadDurationSec;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -304,5 +303,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return builder.toString();
+    }
+
+    public void turnServiceTrigger(View view) {
     }
 }

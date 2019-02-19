@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CloudVision</string>
+    <string name="app_name">OCR_CaptureService</string>
     <string name="action_settings">Settings</string>
     <string name="image_details_header">Details:</string>
     <string name="image_preview_header">Preview:</string>
@@ -10,4 +10,7 @@
     <string name="dialog_select_gallery">Gallery</string>
 
     <string name="image_picker_error">Something is wrong with that image. Pick a different one please.</string>
+
+    <string name="notification_title">언제든지 일정을 추가하려면 누르십시오</string>
+    <string name="notification_content">히든 캡처 후 Kalendar 어플로 이동</string>
 </resources>

@@ -31,14 +31,13 @@
         android:layout_margin="@dimen/fab_margin"
         android:src="@mipmap/ic_launcher"/>
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/screenshot"
-        android:src="@drawable/screenshot"
-        android:adjustViewBounds="true"/>
 
-
-
+    <Button
+        android:id="@+id/ServiceTrigger"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|left"
+        android:onClick="turnServiceTrigger"
+        android:text="서비스 활성화" />
 
 </android.support.design.widget.CoordinatorLayout>
