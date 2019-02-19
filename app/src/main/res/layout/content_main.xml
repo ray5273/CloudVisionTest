@@ -27,13 +27,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:textIsSelectable="true"
-                android:text="Use the floating action button to select an image." />
+                android:text="Use the floating action button to take a screenshot." />
 
             <ImageView
                 android:id="@+id/main_image"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:scaleType="fitCenter"/>
+                android:scaleType="fitCenter" />
+
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

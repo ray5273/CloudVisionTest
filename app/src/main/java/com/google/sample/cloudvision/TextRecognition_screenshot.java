@@ -53,7 +53,7 @@ import androidx.annotation.NonNull;
 
 public class TextRecognition_screenshot extends AppCompatActivity {
     private static final String CLOUD_VISION_API_KEY = "AIzaSyAT4yeZeEV1J9BHydi2HMBoRkJDbrZK5NU";
-    public static final String FILE_NAME = "Screenshot1.jpg";
+    public static final String FILE_NAME = "Screenshot2.jpg";
 
     private static final String TAG = MainActivity.class.getSimpleName();
     public static final int SCREENSHOT_PERMISSIONS_REQUEST = 0;
