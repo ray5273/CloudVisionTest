@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.sample.cloudvision;
+package com.google.sample.cloudvision.TempJavaFiles;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -31,7 +31,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,7 +48,7 @@ import com.google.api.services.vision.v1.model.BatchAnnotateImagesResponse;
 import com.google.api.services.vision.v1.model.EntityAnnotation;
 import com.google.api.services.vision.v1.model.Feature;
 import com.google.api.services.vision.v1.model.Image;
-import com.google.sample.cloudvision.NotificationServiceTool.AlwaysOnNotificationBarService;
+import com.google.sample.cloudvision.R;
 import com.google.sample.cloudvision.Utilities.PermissionUtils;
 
 import java.io.ByteArrayOutputStream;

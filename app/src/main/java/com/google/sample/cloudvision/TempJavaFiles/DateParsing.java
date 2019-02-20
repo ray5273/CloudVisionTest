@@ -1,4 +1,4 @@
-package com.google.sample.cloudvision;
+package com.google.sample.cloudvision.TempJavaFiles;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;

@@ -35,7 +35,7 @@ import com.google.firebase.ml.vision.text.FirebaseVisionCloudTextRecognizerOptio
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import com.google.firebase.ml.vision.text.RecognizedLanguage;
-import com.google.sample.cloudvision.MainActivity;
+import com.google.sample.cloudvision.TempJavaFiles.MainActivity;
 import com.google.sample.cloudvision.Utilities.PermissionUtils;
 import com.google.sample.cloudvision.R;
 

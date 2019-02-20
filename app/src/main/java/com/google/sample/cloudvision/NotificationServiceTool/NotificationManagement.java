@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 
-import com.google.sample.cloudvision.MainActivity;
 import com.google.sample.cloudvision.MainService.TextRecognition_screenshot;
 import com.google.sample.cloudvision.R;
 

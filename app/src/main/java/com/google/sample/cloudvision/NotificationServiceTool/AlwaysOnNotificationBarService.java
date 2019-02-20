@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import com.google.sample.cloudvision.MainActivity;
 import com.google.sample.cloudvision.MainService.TextRecognition_screenshot;
 import com.google.sample.cloudvision.R;
 
